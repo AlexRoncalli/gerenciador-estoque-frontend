@@ -103,30 +103,28 @@ export function Inventory() {
   };
 
   // Função de Editar, conectada à API
-  const handleEditProduct = async (updatedProductData: Product) => {
+const handleEditProduct = (updatedProductData: Omit<Product, 'quantity'>) => {
     const originalProduct = products.find(p => p.sku === updatedProductData.sku);
     if (!originalProduct) return;
 
-    const finalProductData = {
-      ...originalProduct, // Preserva campos não editáveis como 'quantity'
-      ...updatedProductData,
-      history: {
-        lastEditDate: new Date().toLocaleDateString('pt-BR'),
-        previousPrice: originalProduct.costPrice,
-        bestPrice: Math.min(originalProduct.history?.bestPrice || originalProduct.costPrice, updatedProductData.costPrice),
-      },
-    };
-
-    try {
-      const response = await api.put(`/product/${finalProductData.sku}`, finalProductData);
-      setProducts(current =>
-        current.map(p => (p.sku === finalProductData.sku ? response.data : p))
-      );
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Erro ao editar produto:", error);
-      alert("Não foi possível editar o produto.");
-    }
+    setProducts(current =>
+      current.map(p => {
+        if (p.sku === updatedProductData.sku) {
+          const currentBestPrice = p.history?.bestPrice || p.costPrice;
+          return {
+            ...p, // Mantém a quantidade e outras propriedades não editadas
+            ...updatedProductData,
+            history: {
+              lastEditDate: new Date().toLocaleDateString('pt-BR'),
+              previousPrice: originalProduct.costPrice,
+              bestPrice: Math.min(currentBestPrice, updatedProductData.costPrice),
+            },
+          };
+        }
+        return p;
+      })
+    );
+    setIsModalOpen(false);
   };
 
   // Função de Deletar, conectada à API e usando SKU
