@@ -1,0 +1,96 @@
+.pageContainer {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Adiciona um espaço entre os cards */
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Os botões agora usam o estilo padrão da nossa aplicação */
+.dropdownButton, .recompraButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #0d6efd;
+  color: white;
+  border: 1px solid #0d6efd;
+}
+
+.dropdownButton:hover, .recompraButton:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Mantém um estilo um pouco diferente para o dropdown para diferenciá-lo */
+.dropdownButton {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+  color: #333;
+}
+
+.dropdownButton:hover {
+  background-color: #e9ecef;
+}
+
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dropdownItem:hover {
+  background-color: #f1f3f5;
+}
+
+.dropdownItem input {
+  margin-right: 0.75rem;
+}
+

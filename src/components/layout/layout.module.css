@@ -1,0 +1,11 @@
+.layoutContainer {
+  display: flex;
+}
+
+.content {
+  /* O padding-left precisa ser igual à largura da sidebar */
+  padding-left: 260px; 
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+}

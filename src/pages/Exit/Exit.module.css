@@ -1,0 +1,31 @@
+/* A maior parte do CSS é igual ao de outras páginas, com adição das tags */
+.pageContainer { padding: 1.5rem; animation: fadeIn 0.5s ease-in-out; }
+.headerActions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.searchInput { padding: 0.6rem 1rem; font-size: 0.9rem; border-radius: 6px; border: 1px solid #ccc; width: 40%; }
+.buttonGroup { display: flex; gap: 1rem; }
+.button { padding: 0.6rem 1.2rem; font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; background-color: #0d6efd; color: white; border: 1px solid #0d6efd; }
+.tableContainer { width: 100%; overflow-x: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid #dee2e6; }
+.table thead { background-color: #0d6efd; color: white; }
+.table tbody tr:hover { background-color: #f1f3f5; }
+.actionsCell { display: flex; gap: 0.8rem; }
+
+/* Estilos para as "tags" de tipo de saída */
+.tagExpedicao, .tagFull {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #fff;
+}
+
+.tagExpedicao {
+  background-color: #fd7e14; /* Laranja para expedição */
+}
+
+.tagFull {
+  background-color: #6f42c1; /* Roxo para full */
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

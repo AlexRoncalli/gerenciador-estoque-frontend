@@ -1,0 +1,11 @@
+.pageContainer { padding: 1.5rem; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.button { padding: 0.6rem 1.2rem; font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; background-color: #0d6efd; color: white; border: 1px solid #0d6efd; }
+.tableContainer { width: 100%; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid #dee2e6; }
+.table thead { background-color: #0d6efd; color: white; }
+.actionsCell { text-align: center; }
+.roleAdmin, .roleUser { padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 500; font-size: 0.8rem; color: #fff; }
+.roleAdmin { background-color: #dc3545; } /* Vermelho para Admin */
+.roleUser { background-color: #6c757d; } /* Cinza para Usuário */

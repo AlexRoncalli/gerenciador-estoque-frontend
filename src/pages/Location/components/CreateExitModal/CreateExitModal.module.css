@@ -1,0 +1,109 @@
+/* Estilos semelhantes aos outros modais */
+.formGroup {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Aplica o estilo padrão a todos os inputs, selects e textareas */
+.formGroup input,
+.select, 
+.textarea {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  width: 100%; /* Garante que ocupem todo o espaço do contêiner */
+}
+
+/* Adiciona um espaçamento entre os campos na mesma linha */
+.formGroupRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.formGroupRow > .formGroup {
+  flex: 1;
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.formFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.cancelButton, .submitButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+  color: #333;
+}
+
+.submitButton {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.submitButton:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Novo: Estilos para a secção de informação do produto */
+.productInfo {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e9ecef;
+}
+
+.infoField {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.infoField strong {
+  color: #212529;
+}
+
+.infoField:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+/* Novo: Estilo para inputs de apenas leitura */
+.readOnlyInput {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+

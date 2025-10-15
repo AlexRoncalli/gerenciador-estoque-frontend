@@ -1,0 +1,34 @@
+.historyContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.historyItem strong {
+  font-weight: 500;
+  color: #495057;
+}
+
+.historyItem span {
+  font-weight: 400;
+  font-size: 1.1rem;
+  color: #212529;
+}
+
+.bestPrice strong {
+  color: #198754; /* Verde para destacar */
+}
+
+.bestPrice span {
+  font-weight: bold;
+  color: #198754;
+}
+

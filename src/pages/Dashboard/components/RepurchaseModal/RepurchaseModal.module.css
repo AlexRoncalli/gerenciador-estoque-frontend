@@ -1,0 +1,59 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableContainer {
+  width: 100%;
+  max-height: 55vh; /* Limita a altura da tabela */
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+}
+
+.lowStock {
+  color: #dc3545; /* Vermelho para destacar a quantidade baixa */
+  font-weight: bold;
+}
+
+/* Novo: Estilos para o rodapé e o botão de exportação */
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.exportButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #198754; /* Verde para combinar com a ideia de "sucesso/exportar" */
+  color: white;
+  border: 1px solid #198754;
+}
+
+.exportButton:hover {
+  background-color: #157347;
+  border-color: #146c43;
+}
+

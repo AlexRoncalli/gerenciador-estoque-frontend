@@ -1,0 +1,30 @@
+/* 1. Reset global para remover margens e garantir que o layout comece "zerado". */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2. Regra principal para corrigir o layout. 
+   Força os elementos raiz da aplicação a ocuparem 100% do espaço da tela.
+*/
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+/* 3. Estilos base para o corpo da página. */
+body {
+  /* Define uma família de fontes padrão e moderna para toda a aplicação. */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  
+  /* Melhora a renderização das fontes em telas de alta resolução. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Define a cor de fundo padrão que corresponde ao nosso layout. */
+  background-color: #f4f7f9; 
+  
+  /* Define a cor de texto padrão. */
+  color: #213547;
+}

@@ -1,0 +1,115 @@
+/* Adicionamos um padding aqui para criar o espaçamento das bordas */
+.pageContainer {
+  padding: 1.5rem; 
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Alterado para alinhar o campo de busca e os botões */
+.headerActions {
+  display: flex;
+  justify-content: space-between; /* Alinha itens nas extremidades */
+  align-items: center; /* Alinha verticalmente */
+  margin-bottom: 1.5rem;
+}
+
+/* Novo estilo para o campo de pesquisa */
+.searchInput {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 40%; /* Ocupa uma parte do espaço */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
+/* Agrupa os botões para mantê-los juntos */
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+}
+
+.button {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #0d6efd;
+  color: white;
+  border: 1px solid #0d6efd;
+}
+
+.button:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/*.exportButton {
+   Estilos específicos podem ser adicionados aqui se necessário no futuro */
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table thead {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.table thead th {
+  font-weight: 600;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+.actionsCell {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #6c757d;
+  transition: color 0.2s;
+}
+
+.actionButton:hover {
+  color: #0d6efd;
+}
+
+.deleteButton:hover {
+  color: #dc3545;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
