@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { api } from '../../services/api';
+import  api  from '../../services/api';
 import styles from './Admin.module.css'; // Criaremos este arquivo a seguir
 
 interface DeletionRequest {

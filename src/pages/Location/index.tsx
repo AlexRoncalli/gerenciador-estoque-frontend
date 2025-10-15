@@ -7,7 +7,7 @@ import { ActionMenu } from '../../components/ActionMenu';
 import { exportToExcel } from '../../utils/exportToExcel';
 import { useProducts } from '../../context/ProductContext';
 import { Product } from '../../types';
-import { api } from '../../services/api';
+import  api  from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import { AxiosError } from 'axios';
 import { AddLocationModal } from './components/AddLocationModal';

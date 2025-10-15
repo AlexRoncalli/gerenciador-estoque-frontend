@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Product, ProductLocation, ProductExit } from '../types';
-import { api } from '../services/api'; // Importe a API
+import  api  from '../services/api'; // Importe a API
 import { AuthContext } from './AuthContext';
 
 // Interface que define tudo que o contexto vai fornecer

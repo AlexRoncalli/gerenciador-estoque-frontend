@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'; // <-- Adicione useContext
-import { api } from '../../../services/api';
+import  api  from '../../../services/api';
 import { ActionMenu } from '../../../components/ActionMenu';
 import { UserModal } from '../../../components/UserModal';
 import styles from './UserManagement.module.css';

@@ -4,7 +4,7 @@ import { useProducts } from '../../context/ProductContext';
 import { ActionMenu } from '../../components/ActionMenu';
 import { EditObservationModal } from '../../components/EditObservationModal/EditObservationModal';
 import { exportToExcel } from '../../utils/exportToExcel';
-import { api } from '../../services/api';
+import api from '../../services/api'; 
 import { ProductExit } from '../../types';
 
 export function Exit() {

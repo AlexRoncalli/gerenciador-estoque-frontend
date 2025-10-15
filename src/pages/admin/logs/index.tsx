@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { api } from '../../../services/api';
+import  api  from '../../../services/api';
 import styles from './AuditLog.module.css'; // Criaremos este arquivo
 import { AuthContext } from '../../../context/AuthContext';
 

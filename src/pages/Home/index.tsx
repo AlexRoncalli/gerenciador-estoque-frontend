@@ -8,7 +8,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AllInboxIcon from '@mui/icons-material/AllInbox';
 import RuleFolderIcon from '@mui/icons-material/RuleFolder';
 import WeekendIcon from '@mui/icons-material/Weekend';
-import { api } from '../../services/api';
+import  api  from '../../services/api';
 
 function StatCard({ title, value, icon }: { title: string, value: number | string, icon: React.ReactElement }) {
   return (
