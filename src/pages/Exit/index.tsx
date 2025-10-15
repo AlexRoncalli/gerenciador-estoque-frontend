@@ -35,7 +35,7 @@ export function Exit() {
     const result = exits.filter(item =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.observation.toLowerCase().includes(searchQuery.toLowerCase())
+      (item.observation ?? '').toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredExits(result);
   }, [searchQuery, exits]);
