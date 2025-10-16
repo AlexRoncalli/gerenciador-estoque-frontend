@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Modal.module.css';
+import Draggable from 'react-draggable';
 import { FaTimes } from 'react-icons/fa';
 
 type ModalProps = {
@@ -25,21 +26,24 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
     }
   };
 
-
   return (
-    // O 'portal' do modal, que escurece o fundo
     <div className={styles.overlay} onClick={handleOverlayClick}>
-      <div className={styles.modalContent}>
-        <header className={styles.modalHeader}>
-          <h2>{title}</h2>
-          <button onClick={onClose} className={styles.closeButton}>
-            <FaTimes />
-          </button>
-        </header>
-        <main className={styles.modalBody}>
-          {children}
-        </main>
-      </div>
+      {/* 2. Envolva o conteúdo do modal com o componente Draggable */}
+      <Draggable handle={`.${styles.modalHeader}`}>
+        <div className={styles.modalContent} style={{ cursor: 'move' }}> {/* Adicionado cursor para feedback visual */}
+          {/* 3. O 'handle' acima usa a classe do header para definir a área de arrasto */}
+          <header className={styles.modalHeader}>
+            <h2>{title}</h2>
+            <button onClick={onClose} className={styles.closeButton}>
+              X
+              <FaTimes />{/*não sei oq isso faz ver com juru*/}
+            </button>
+          </header>
+          <main style={{ cursor: 'default' }}> {/* Restaura o cursor padrão para o conteúdo */}
+            {children}
+          </main>
+        </div>
+      </Draggable>
     </div>
   );
 }
