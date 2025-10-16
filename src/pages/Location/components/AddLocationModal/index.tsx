@@ -10,9 +10,10 @@ type AddLocationModalProps = {
   onSave: (locationData: Omit<ProductLocation, 'name'> & { volumeToMove?: number }) => void;
   mode: 'add' | 'edit';
   initialData?: ProductLocation | null;
+  isSubmitting: boolean;
 };
 
-export function AddLocationModal({ isOpen, onClose, onSave, mode, initialData }: AddLocationModalProps) {
+export function AddLocationModal({ isOpen, onClose, onSave, mode, initialData, isSubmitting }: AddLocationModalProps) {
   const { findProductBySku } = useProducts();
 
   const [sku, setSku] = useState('');
@@ -116,7 +117,7 @@ export function AddLocationModal({ isOpen, onClose, onSave, mode, initialData }:
 
         <footer className={styles.formFooter}>
           <button type="button" onClick={handleClose} className={styles.cancelButton}>Cancelar</button>
-          <button type="submit" className={styles.submitButton}>Salvar</button>
+          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>{isSubmitting ? 'Salvando...' : 'Salvar'}</button>
         </footer>
       </form>
     </Modal>

@@ -12,9 +12,10 @@ type CreateExitModalProps = {
   // onSave agora envia os dados da loja e a observação opcional
   onSave: (exitData: { exitType: 'Expedição' | 'Full', store?: Store, observation?: string, volumeToExit: number }) => void;
   locationData: ProductLocation | null;
+  isSubmitting: boolean;
 };
 
-export function CreateExitModal({ isOpen, onClose, onSave, locationData }: CreateExitModalProps) {
+export function CreateExitModal({ isOpen, onClose, onSave, locationData, isSubmitting }: CreateExitModalProps) {
   const [exitType, setExitType] = useState<'Expedição' | 'Full'>('Expedição');
   const [store, setStore] = useState<Store | ''>(''); // Estado para a loja selecionada
   const [observation, setObservation] = useState('');
@@ -96,8 +97,12 @@ export function CreateExitModal({ isOpen, onClose, onSave, locationData }: Creat
         </div>
         <footer className={styles.formFooter}>
           <button type="button" onClick={handleClose} className={styles.cancelButton}>Cancelar</button>
-          <button type="submit" className={styles.submitButton} disabled={isSaveDisabled}>
-            Confirmar Saída
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={isSubmitting} // <-- A MÁGICA ACONTECE AQUI
+          >
+            {isSubmitting ? 'Salvando...' : 'Criar Saída'}
           </button>
         </footer>
       </form>

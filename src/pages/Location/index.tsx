@@ -23,6 +23,7 @@ export function Location() {
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [locationToEdit, setLocationToEdit] = useState<ProductLocation | null>(null);
   const [locationToExit, setLocationToExit] = useState<ProductLocation | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);// evitar multiplos clicks fazendo varias adições
 
   // Carrega localizações do backend ao iniciar
   useEffect(() => {
@@ -72,7 +73,7 @@ export function Location() {
   };
 
   // LÓGICA PRINCIPAL: Faz recálculo local e sincroniza com backend
-  const handleSaveLocation = async (locationData: Omit<ProductLocation, 'name'> & { volumeToMove?: number }) => {
+  const handleSaveLocation = async (locationData: Omit<ProductLocation, 'id' | 'name'> & { volumeToMove?: number }) => {
     const product = findProductBySku(locationData.sku);
     if (!product) {
       alert('Erro: Produto com este SKU não foi encontrado.');
@@ -80,6 +81,8 @@ export function Location() {
     }
 
     try {
+      setIsSubmitting(true);
+
       if (modalMode === 'edit') {
         // ===== MOVIMENTAÇÃO =====
         if (!locationToEdit || !locationData.volumeToMove) return;
@@ -198,7 +201,8 @@ export function Location() {
           const fullLocationData: ProductLocation = {
             ...locationData,
             name: product.name,
-            date: new Date().toLocaleDateString('pt-BR')
+            date: new Date().toLocaleDateString('pt-BR'),
+            id: ''
           };
 
           await api.post('/location', fullLocationData);
@@ -215,6 +219,9 @@ export function Location() {
     } catch (error) {
       console.error("Erro ao salvar localização:", error);
       alert("Falha ao salvar. Verifique os dados e tente novamente.");
+    } finally {
+      // Desativa o estado de carregamento, ocorrendo erro ou não
+      setIsSubmitting(false);
     }
   };
 
@@ -238,6 +245,7 @@ export function Location() {
     };
 
     try {
+      setIsSubmitting(true);
       // 1. Registra a saída
       await api.post('/exit', newExitData);
 
@@ -265,6 +273,9 @@ export function Location() {
     } catch (error) {
       console.error("Erro ao criar saída:", error);
       alert("Falha ao registrar a saída. Tente novamente.");
+    } finally {
+      // Desativa o estado de carregamento, ocorrendo erro ou não
+      setIsSubmitting(false);
     }
   };
 
@@ -338,6 +349,7 @@ export function Location() {
         onSave={handleSaveLocation}
         mode={modalMode}
         initialData={locationToEdit}
+        isSubmitting={isSubmitting}
       />
 
       <CreateExitModal
@@ -345,6 +357,7 @@ export function Location() {
         onClose={() => setIsExitModalOpen(false)}
         onSave={handleCreateExit}
         locationData={locationToExit}
+        isSubmitting={isSubmitting}
       />
     </div>
   );
