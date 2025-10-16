@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './Modal.module.css';
 import Draggable from 'react-draggable';
 import { FaTimes } from 'react-icons/fa';
+import { useRef } from 'react';
 
 type ModalProps = {
   isOpen: boolean;
@@ -11,6 +12,7 @@ type ModalProps = {
 };
 
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  const nodeRef = useRef(null);
   // Se o modal não estiver aberto, não renderiza nada
   if (!isOpen) {
     return null;
@@ -29,8 +31,9 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   return (
     <div className={styles.overlay} onClick={handleOverlayClick}>
       {/* 2. Envolva o conteúdo do modal com o componente Draggable */}
-      <Draggable handle={`.${styles.modalHeader}`}>
-        <div className={styles.modalContent} style={{ cursor: 'move' }}> {/* Adicionado cursor para feedback visual */}
+      <Draggable nodeRef={nodeRef} handle={`.${styles.modalHeader}`}>
+        <div ref={nodeRef} className={styles.modalContent} style={{ cursor: 'move' }}>
+           {/* Adicionado cursor para feedback visual */}
           {/* 3. O 'handle' acima usa a classe do header para definir a área de arrasto */}
           <header className={styles.modalHeader}>
             <h2>{title}</h2>
