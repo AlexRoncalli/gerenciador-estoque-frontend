@@ -13,10 +13,26 @@ type ModalProps = {
 
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   const nodeRef = useRef(null);
+  // Criamos uma ref para rastrear o clique
+  const mouseDownTarget = useRef<EventTarget | null>(null);
   // Se o modal não estiver aberto, não renderiza nada
   if (!isOpen) {
     return null;
   }
+  // Função para registrar onde o clique começou
+  const handleMouseDown = (event: React.MouseEvent) => {
+    mouseDownTarget.current = event.target;
+  };
+
+  // 👇 3. Função para verificar onde o clique terminou
+  const handleMouseUp = (event: React.MouseEvent) => {
+    // A condição agora é: o clique começou e terminou no mesmo lugar (o overlay)?
+    if (mouseDownTarget.current === event.target && event.target === event.currentTarget) {
+      onClose();
+    }
+    // Limpa a ref para o próximo clique
+    mouseDownTarget.current = null;
+  };
 
   const handleOverlayClick = (event: React.MouseEvent) => {
     // A mágica está aqui:
@@ -29,7 +45,11 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   };
 
   return (
-    <div className={styles.overlay} onClick={handleOverlayClick}>
+    <div 
+      className={styles.overlay} 
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+    >
       {/* 2. Envolva o conteúdo do modal com o componente Draggable */}
       <Draggable nodeRef={nodeRef} handle={`.${styles.modalHeader}`}>
         <div ref={nodeRef} className={styles.modalContent} style={{ cursor: 'move' }}>
