@@ -175,8 +175,23 @@ export function Inventory() {
   };
 
   // Funções auxiliares para abrir modais e exportar
-  const handleExport = () => { exportToExcel(filteredProducts, 'inventario_kualie_bijux'); };
+  const handleExport = () => {
+    const dataToExport = filteredProducts.map(product => ({
+      'SKU': product.sku,
+      'Nome do Produto': product.name,
+      'Cor': product.color || '-',
+      'Preço de Custo': product.costPrice,
+      'Quantidade': product.quantity,
+      'Marca': product.brand,
+      'Melhor Preço': product.history?.bestPrice,
+      // A data do melhor preço será a data da última edição, como guardado no histórico
+      'Data (Melhor Preço)': product.history?.lastEditDate,
+    }));
 
+    // 2. Chama a função de exportação com os dados já preparados
+    exportToExcel(dataToExport, 'inventario_kualie_bijux');
+  };
+  
   const openAddModal = () => {
     // ADICIONADO PARA TESTAR O CLIQUE
     console.log("Botão 'Adicionar Produto' foi clicado!");

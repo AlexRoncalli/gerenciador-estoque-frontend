@@ -2,7 +2,7 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Adiciona um espaço entre os cards */
+  gap: 1.5rem;
 }
 
 .card {
@@ -27,14 +27,8 @@
   font-weight: 600;
   color: #343a40;
 }
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Os botões agora usam o estilo padrão da nossa aplicação */
-.dropdownButton, .recompraButton {
+/* SASA */
+.button {
   padding: 0.6rem 1.2rem;
   font-size: 0.9rem;
   font-weight: 500;
@@ -46,15 +40,26 @@
   border: 1px solid #0d6efd;
 }
 
-.dropdownButton:hover, .recompraButton:hover {
+.button:hover {
   background-color: #0b5ed7;
   border-color: #0a58ca;
 }
 
-/* Mantém um estilo um pouco diferente para o dropdown para diferenciá-lo */
+/* Novo: Contêiner para os botões do dashboard */
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+}
+
 .dropdownButton {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
   background-color: #f8f9fa;
-  border-color: #ccc;
+  border: 1px solid #ccc;
   color: #333;
 }
 
@@ -62,6 +67,10 @@
   background-color: #e9ecef;
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
 
 .dropdownMenu {
   position: absolute;

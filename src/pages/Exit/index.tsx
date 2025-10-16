@@ -91,6 +91,7 @@ export function Exit() {
               <th>Quantidade</th>
               <th>Data</th>
               <th>Tipo de Saída</th>
+              <th>Loja</th>
               <th>Observação</th>
               <th>Ações</th>
             </tr>
@@ -98,7 +99,7 @@ export function Exit() {
           <tbody>
             {filteredExits.map((item) => {
               const menuOptions = [
-                { label: 'Editar Observação', onClick: () => openEditModal(item) },
+                { label: 'Editar Observação', onClick: () => alert(`Lógica para editar a observação do item ${item.sku} ainda por implementar.`) },
               ];
 
               return (
@@ -108,7 +109,8 @@ export function Exit() {
                   <td>{item.quantity}</td>
                   <td>{item.date}</td>
                   <td><span className={item.exitType === 'Expedição' ? styles.tagExpedicao : styles.tagFull}>{item.exitType}</span></td>
-                  <td>{item.observation}</td>
+                  <td>{item.store || '-'}</td>
+                  <td>{item.observation || '-'}</td>
                   <td className={styles.actionsCell}>
                     <ActionMenu options={menuOptions} />
                   </td>

@@ -18,11 +18,11 @@ const parseDate = (dateString: string): Date => {
 
 export function Dashboard() {
   const { exits, products, locations } = useProducts();
-  
+
   const [selectedStores, setSelectedStores] = useState<Store[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+
   const [isRepurchaseModalOpen, setIsRepurchaseModalOpen] = useState(false);
   const [isStagnantModalOpen, setIsStagnantModalOpen] = useState(false);
 
@@ -48,7 +48,7 @@ export function Dashboard() {
     });
     return data;
   }, [exits, selectedStores]);
-  
+
   // A LÓGICA DE CÁLCULO FOI REFEITA AQUI
   const { pieChartData, productsToRepurchase, stagnantItems } = useMemo(() => {
     const today = new Date();
@@ -62,7 +62,7 @@ export function Dashboard() {
         .reduce((sum, loc) => sum + (loc.volume * loc.unitsPerBox), 0);
 
       const needsRepurchase = product.repurchaseRule && currentQuantity <= product.repurchaseRule;
-      
+
       let isStagnant = false;
       let daysSinceLastMovement = 0;
 
@@ -155,7 +155,7 @@ export function Dashboard() {
             </button>
           </div>
         </div>
-        
+
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie data={pieChartData} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name} (${value})`} outerRadius={100} fill="#8884d8" dataKey="value">
@@ -170,8 +170,8 @@ export function Dashboard() {
       </div>
 
       <RepurchaseModal isOpen={isRepurchaseModalOpen} onClose={() => setIsRepurchaseModalOpen(false)} productsToRepurchase={productsToRepurchase} />
-      
-      <StagnantItemsModal 
+
+      <StagnantItemsModal
         isOpen={isStagnantModalOpen}
         onClose={() => setIsStagnantModalOpen(false)}
         stagnantItems={stagnantItems}
