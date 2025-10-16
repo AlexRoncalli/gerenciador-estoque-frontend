@@ -7,15 +7,15 @@ import { CreateExitModal } from './components/CreateExitModal';
 import { ProductLocation, ProductExit, Store } from '../../types';
 import { exportToExcel } from '../../utils/exportToExcel';
 import { useProducts } from '../../context/ProductContext';
-import api	from '../../services/api';
+import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 12;
 
 export function Location() {
   const { locations, setLocations, addMasterLocation, setExits, findProductBySku } = useProducts();
   const { user } = useContext(AuthContext);
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,7 +46,7 @@ export function Location() {
 
   const totalPages = Math.ceil(filteredLocations.length / ITEMS_PER_PAGE);
   const currentItems = filteredLocations.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE, 
+    (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
@@ -54,21 +54,21 @@ export function Location() {
 
   const handleExport = () => { exportToExcel(filteredLocations, 'localizacao_produtos'); };
 
-  const openAddModal = () => { 
-    setModalMode('add'); 
-    setLocationToEdit(null); 
-    setIsModalOpen(true); 
+  const openAddModal = () => {
+    setModalMode('add');
+    setLocationToEdit(null);
+    setIsModalOpen(true);
   };
 
-  const openEditModal = (location: ProductLocation) => { 
-    setModalMode('edit'); 
-    setLocationToEdit(location); 
-    setIsModalOpen(true); 
+  const openEditModal = (location: ProductLocation) => {
+    setModalMode('edit');
+    setLocationToEdit(location);
+    setIsModalOpen(true);
   };
 
-  const openCreateExitModal = (location: ProductLocation) => { 
-    setLocationToExit(location); 
-    setIsExitModalOpen(true); 
+  const openCreateExitModal = (location: ProductLocation) => {
+    setLocationToExit(location);
+    setIsExitModalOpen(true);
   };
 
   // LÓGICA PRINCIPAL: Faz recálculo local e sincroniza com backend
@@ -86,17 +86,17 @@ export function Location() {
 
         // 1. Calcula novo estado local (seguindo lógica original)
         const locationsAfterRemoval = locations.map(loc => {
-          if (loc.sku === locationToEdit.sku && 
-              loc.location === locationToEdit.location && 
-              loc.unitsPerBox === locationToEdit.unitsPerBox) {
+          if (loc.sku === locationToEdit.sku &&
+            loc.location === locationToEdit.location &&
+            loc.unitsPerBox === locationToEdit.unitsPerBox) {
             return { ...loc, volume: loc.volume - locationData.volumeToMove! };
           }
           return loc;
         });
 
-        const destinationIndex = locationsAfterRemoval.findIndex(loc => 
-          loc.sku === locationToEdit.sku && 
-          loc.location === locationData.location && 
+        const destinationIndex = locationsAfterRemoval.findIndex(loc =>
+          loc.sku === locationToEdit.sku &&
+          loc.location === locationData.location &&
           loc.unitsPerBox === locationToEdit.unitsPerBox
         );
 
@@ -112,12 +112,12 @@ export function Location() {
         } else {
           // Destino não existe, cria novo lote
           finalLocations = [
-            ...locationsAfterRemoval, 
-            { 
-              ...locationToEdit, 
-              location: locationData.location, 
-              volume: locationData.volumeToMove, 
-              date: new Date().toLocaleDateString('pt-BR') 
+            ...locationsAfterRemoval,
+            {
+              ...locationToEdit,
+              location: locationData.location,
+              volume: locationData.volumeToMove,
+              date: new Date().toLocaleDateString('pt-BR')
             }
           ];
         }
@@ -127,9 +127,9 @@ export function Location() {
 
         // 2. Sincroniza com backend
         // Atualiza origem
-        const originAfterMove = finalLocations.find(loc => 
-          loc.sku === locationToEdit.sku && 
-          loc.location === locationToEdit.location && 
+        const originAfterMove = finalLocations.find(loc =>
+          loc.sku === locationToEdit.sku &&
+          loc.location === locationToEdit.location &&
           loc.unitsPerBox === locationToEdit.unitsPerBox
         );
 
@@ -142,9 +142,9 @@ export function Location() {
         }
 
         // Atualiza ou cria destino
-        const destinationAfterMove = finalLocations.find(loc => 
-          loc.sku === locationToEdit.sku && 
-          loc.location === locationData.location && 
+        const destinationAfterMove = finalLocations.find(loc =>
+          loc.sku === locationToEdit.sku &&
+          loc.location === locationData.location &&
           loc.unitsPerBox === locationToEdit.unitsPerBox
         );
 
@@ -166,10 +166,20 @@ export function Location() {
 
       } else {
         // ===== INCLUSÃO =====
+
+        // NOVA VALIDAÇÃO 
+        // Verifica se a localização já está ocupada por um SKU diferente.
+        const occupiedLocation = locations.find(loc => loc.location.toLowerCase() === locationData.location.toLowerCase());
+
+        if (occupiedLocation && occupiedLocation.sku.toLowerCase() !== locationData.sku.toLowerCase()) {
+          alert(`Erro: A localização "${locationData.location}" já está ocupada pelo produto SKU: ${occupiedLocation.sku}.\nUma localização só pode conter um tipo de produto.`);
+          return; // Impede o salvamento
+        }
+        // ===== INCLUSÃO =====
         // 1. Verifica se já existe lote compatível localmente
-        const existingEntryIndex = locations.findIndex(loc => 
-          loc.sku === locationData.sku && 
-          loc.location === locationData.location && 
+        const existingEntryIndex = locations.findIndex(loc =>
+          loc.sku === locationData.sku &&
+          loc.location === locationData.location &&
           loc.unitsPerBox === locationData.unitsPerBox
         );
 
@@ -180,9 +190,9 @@ export function Location() {
             ...existingEntry,
             volume: existingEntry.volume + locationData.volume
           };
-          
+
           await api.put(`/location/${existingEntry.id}`, updatedEntry);
-          
+
         } else {
           // Novo lote, cria entrada
           const fullLocationData: ProductLocation = {
@@ -190,7 +200,7 @@ export function Location() {
             name: product.name,
             date: new Date().toLocaleDateString('pt-BR')
           };
-          
+
           await api.post('/location', fullLocationData);
         }
 
@@ -209,11 +219,11 @@ export function Location() {
   };
 
   // CRIAR SAÍDA: Remove do estoque e registra a saída
-  const handleCreateExit = async (exitData: { 
-    exitType: 'Expedição' | 'Full', 
-    store?: Store, 
-    observation?: string, 
-    volumeToExit: number 
+  const handleCreateExit = async (exitData: {
+    exitType: 'Expedição' | 'Full',
+    store?: Store,
+    observation?: string,
+    volumeToExit: number
   }) => {
     if (!locationToExit) return;
 
@@ -233,7 +243,7 @@ export function Location() {
 
       // 2. Atualiza ou remove a localização
       const newVolume = locationToExit.volume - exitData.volumeToExit;
-      
+
       if (newVolume > 0) {
         const updatedLocation = {
           ...locationToExit,
@@ -261,12 +271,12 @@ export function Location() {
   return (
     <div className={styles.pageContainer}>
       <header className={styles.headerActions}>
-        <input 
-          type="text" 
-          placeholder="Pesquisar..." 
-          value={searchQuery} 
-          onChange={(e) => setSearchQuery(e.target.value)} 
-          className={styles.searchInput} 
+        <input
+          type="text"
+          placeholder="Pesquisar..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={styles.searchInput}
         />
         <div className={styles.buttonGroup}>
           <button className={styles.button} onClick={openAddModal}>
@@ -316,25 +326,25 @@ export function Location() {
         </table>
       </div>
 
-      <Pagination 
-        currentPage={currentPage} 
-        totalPages={totalPages} 
-        onPageChange={setCurrentPage} 
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
       />
 
-      <AddLocationModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSave={handleSaveLocation} 
-        mode={modalMode} 
-        initialData={locationToEdit} 
+      <AddLocationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveLocation}
+        mode={modalMode}
+        initialData={locationToEdit}
       />
 
-      <CreateExitModal 
-        isOpen={isExitModalOpen} 
-        onClose={() => setIsExitModalOpen(false)} 
-        onSave={handleCreateExit} 
-        locationData={locationToExit} 
+      <CreateExitModal
+        isOpen={isExitModalOpen}
+        onClose={() => setIsExitModalOpen(false)}
+        onSave={handleCreateExit}
+        locationData={locationToExit}
       />
     </div>
   );

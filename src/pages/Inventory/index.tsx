@@ -11,7 +11,7 @@ import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import { AxiosError } from 'axios';
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 12;
 
 export function Inventory() {
   const { products, setProducts, locations } = useProducts();
