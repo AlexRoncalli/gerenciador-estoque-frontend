@@ -57,7 +57,7 @@ export function AddProductModal({ isOpen, onClose, onSave, mode, initialData ,is
 
   const modalTitle = mode === 'edit' ? 'Editar Produto' : (mode === 'clone' ? 'Clonar Produto' : 'Adicionar Novo Produto');
   const saveButtonText = mode === 'edit' ? 'Salvar Alterações' : 'Salvar Produto';
-
+  //arrumar botão
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={modalTitle}>
       <form onSubmit={handleSubmit} className={styles.form}>
