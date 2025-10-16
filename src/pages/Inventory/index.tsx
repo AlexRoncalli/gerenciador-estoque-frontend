@@ -94,7 +94,7 @@ export function Inventory() {
       };
 
       const response = await api.post('/product', completeProductData);
-      setProducts(current => [...current, response.data]);
+      setProducts(current => [response.data, ...current]);
       setIsModalOpen(false);
 
     } catch (error) {
