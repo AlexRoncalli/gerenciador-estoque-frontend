@@ -35,7 +35,6 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           <header className={styles.modalHeader}>
             <h2>{title}</h2>
             <button onClick={onClose} className={styles.closeButton}>
-              X
               <FaTimes />{/*não sei oq isso faz ver com juru*/}
             </button>
           </header>
