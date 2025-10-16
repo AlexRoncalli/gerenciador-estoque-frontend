@@ -10,9 +10,10 @@ type AddProductModalProps = {
   onSave: (productData: Omit<Product, 'id' | 'quantity' | 'history'>) => void;
   mode: 'add' | 'edit' | 'clone';
   initialData?: Product | null;
+  isSubmitting: boolean; // <-- Recebe a nova prop
 };
 
-export function AddProductModal({ isOpen, onClose, onSave, mode, initialData }: AddProductModalProps) {
+export function AddProductModal({ isOpen, onClose, onSave, mode, initialData ,isSubmitting }: AddProductModalProps) {
   const [sku, setSku] = useState('');
   const [name, setName] = useState('');
   const [costPrice, setCostPrice] = useState(0);
@@ -90,7 +91,7 @@ export function AddProductModal({ isOpen, onClose, onSave, mode, initialData }: 
         </div>
         <footer className={styles.formFooter}>
           <button type="button" onClick={handleClose} className={styles.cancelButton}>Cancelar</button>
-          <button type="submit" className={styles.submitButton}>{saveButtonText}</button>
+          <button type="submit" className={styles.submitButton}>{saveButtonText} disabled={isSubmitting} </button>
         </footer>
       </form>
     </Modal>

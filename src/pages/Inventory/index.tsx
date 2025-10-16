@@ -7,7 +7,7 @@ import { ActionMenu } from '../../components/ActionMenu';
 import { exportToExcel } from '../../utils/exportToExcel';
 import { useProducts } from '../../context/ProductContext';
 import { Product } from '../../types';
-import api	 from '../../services/api';
+import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import { AxiosError } from 'axios';
 
@@ -25,6 +25,7 @@ export function Inventory() {
   const [modalMode, setModalMode] = useState<'add' | 'edit' | 'clone'>('add');
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
   const [productForHistory, setProductForHistory] = useState<Product | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); //isso aqui vai resolver o erro de adicionar varias vezes
 
   // Efeito para carregar produtos do backend ao iniciar a página
   useEffect(() => {
@@ -76,6 +77,10 @@ export function Inventory() {
 
 
     try {
+      // Inicia a submissão 
+      setIsSubmitting(true);
+
+
       const completeProductData = {
         ...newProductData,
         quantity: 0, // Quantidade inicial é sempre 0
@@ -99,11 +104,13 @@ export function Inventory() {
       } else {
         alert('Erro ao adicionar produto. Verifique os dados.');
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // Função de Editar, conectada à API
-const handleEditProduct = (updatedProductData: Omit<Product, 'quantity'>) => {
+  const handleEditProduct = (updatedProductData: Omit<Product, 'quantity'>) => {
     const originalProduct = products.find(p => p.sku === updatedProductData.sku);
     if (!originalProduct) return;
 
@@ -244,7 +251,7 @@ const handleEditProduct = (updatedProductData: Omit<Product, 'quantity'>) => {
       </div>
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-      <AddProductModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleSave} mode={modalMode} initialData={productToEdit} />
+      <AddProductModal isOpen={isModalOpen}  onClose={() => setIsModalOpen(false)} onSave={handleSave} mode={modalMode} initialData={productToEdit} isSubmitting={isSubmitting}/>
       <HistoryModal isOpen={isHistoryModalOpen} onClose={() => setIsHistoryModalOpen(false)} product={productForHistory} />
     </div>
   );
