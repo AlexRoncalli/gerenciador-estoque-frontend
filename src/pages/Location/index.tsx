@@ -7,7 +7,7 @@ import { CreateExitModal } from './components/CreateExitModal';
 import { ProductLocation, ProductExit, Store } from '../../types';
 import { exportToExcel } from '../../utils/exportToExcel';
 import { useProducts } from '../../context/ProductContext';
-import { api } from '../../services/api';
+import api	from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 
 const ITEMS_PER_PAGE = 9;
