@@ -91,7 +91,8 @@ export function AddProductModal({ isOpen, onClose, onSave, mode, initialData ,is
         </div>
         <footer className={styles.formFooter}>
           <button type="button" onClick={handleClose} className={styles.cancelButton}>Cancelar</button>
-          <button type="submit" className={styles.submitButton}>{saveButtonText} disabled={isSubmitting} </button>
+          <button type="submit" className={styles.submitButton}>{saveButtonText} disabled={isSubmitting}
+        {isSubmitting ? 'Salvando...' : 'Salvar Produto'} </button>
         </footer>
       </form>
     </Modal>
