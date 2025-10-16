@@ -109,29 +109,42 @@ export function Inventory() {
     }
   };
 
-  // Função de Editar, conectada à API
-  const handleEditProduct = (updatedProductData: Omit<Product, 'quantity'>) => {
+  // Função de Editar, agora conectada à API e com controle de submissão
+  const handleEditProduct = async (updatedProductData: Omit<Product, 'quantity'>) => {
     const originalProduct = products.find(p => p.sku === updatedProductData.sku);
     if (!originalProduct) return;
 
-    setProducts(current =>
-      current.map(p => {
-        if (p.sku === updatedProductData.sku) {
-          const currentBestPrice = p.history?.bestPrice || p.costPrice;
-          return {
-            ...p, // Mantém a quantidade e outras propriedades não editadas
-            ...updatedProductData,
-            history: {
-              lastEditDate: new Date().toLocaleDateString('pt-BR'),
-              previousPrice: originalProduct.costPrice,
-              bestPrice: Math.min(currentBestPrice, updatedProductData.costPrice),
-            },
-          };
-        }
-        return p;
-      })
-    );
-    setIsModalOpen(false);
+    // <-- 1. Adicionamos o bloco try/catch/finally
+    try {
+      // <-- 2. Ativamos o estado de submissão
+      setIsSubmitting(true);
+
+      const currentBestPrice = originalProduct.history?.bestPrice || originalProduct.costPrice;
+      const productToSend = {
+        ...updatedProductData,
+        history: {
+          lastEditDate: new Date().toLocaleDateString('pt-BR'),
+          previousPrice: originalProduct.costPrice,
+          bestPrice: Math.min(currentBestPrice, updatedProductData.costPrice),
+        },
+      };
+
+      // <-- 3. Fazemos a chamada PUT para o backend
+      const response = await api.put(`/product/${updatedProductData.sku}`, productToSend);
+
+      // <-- 4. Atualizamos o estado local com a resposta do servidor
+      setProducts(current =>
+        current.map(p => (p.sku === updatedProductData.sku ? response.data : p))
+      );
+      setIsModalOpen(false);
+
+    } catch (error) {
+      console.error("Erro ao editar produto:", error);
+      alert("Não foi possível salvar as alterações do produto.");
+    } finally {
+      // <-- 5. Desativamos o estado de submissão em qualquer cenário
+      setIsSubmitting(false);
+    }
   };
 
   // Função de Deletar, conectada à API e usando SKU
@@ -251,7 +264,7 @@ export function Inventory() {
       </div>
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-      <AddProductModal isOpen={isModalOpen}  onClose={() => setIsModalOpen(false)} onSave={handleSave} mode={modalMode} initialData={productToEdit} isSubmitting={isSubmitting}/>
+      <AddProductModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleSave} mode={modalMode} initialData={productToEdit} isSubmitting={isSubmitting} />
       <HistoryModal isOpen={isHistoryModalOpen} onClose={() => setIsHistoryModalOpen(false)} product={productForHistory} />
     </div>
   );
