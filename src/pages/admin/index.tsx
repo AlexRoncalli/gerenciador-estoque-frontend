@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import  api  from '../../services/api';
 import styles from './Admin.module.css'; // Criaremos este arquivo a seguir
 
@@ -10,24 +10,36 @@ interface DeletionRequest {
   create_at: string;
 }
 
+interface User {
+  id: string;
+  name: string;
+}
+
 export function AdminPage() {
   const [requests, setRequests] = useState<DeletionRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    async function loadRequests() {
+    async function loadData() {
+      setLoading(true);
       try {
-        const response = await api.get('/admin/deletion-requests');
-        setRequests(response.data);
+        // 5. Busca ambos em paralelo
+        const [requestsResponse, usersResponse] = await Promise.all([
+          api.get('/admin/deletion-requests'), // Endpoint das solicitações
+          api.get('/admin/users')              // Endpoint dos usuários
+        ]);
+        setRequests(requestsResponse.data);
+        setUsers(usersResponse.data);
       } catch (error) {
-        console.error("Erro ao buscar solicitações:", error);
-        alert("Não foi possível carregar as solicitações.");
+        console.error("Erro ao carregar dados:", error);
+        alert("Falha ao carregar solicitações pendentes.");
       } finally {
         setLoading(false);
       }
     }
-    loadRequests();
-  }, []);
+    loadData();
+  }, []); // Roda apenas uma vez
 
   const handleApprove = async (requestId: string) => {
     try {
@@ -39,6 +51,14 @@ export function AdminPage() {
       alert("Falha ao aprovar a solicitação.");
     }
   };
+
+  const userMap = useMemo(() => {
+    const map: { [key: string]: string } = {};
+    users.forEach(user => {
+      map[user.id] = user.name;
+    });
+    return map;
+  }, [users]);
 
   const handleReject = async (requestId: string) => {
     try {
@@ -55,45 +75,55 @@ export function AdminPage() {
     return <div>Carregando solicitações...</div>;
   }
 
-  return (
+   return (
     <div className={styles.pageContainer}>
       <header className={styles.header}>
         <h1>Gerenciar Solicitações de Exclusão</h1>
       </header>
 
-      {requests.length === 0 ? (
-        <p>Não há solicitações pendentes no momento.</p>
-      ) : (
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>SKU do Produto</th>
+              <th>Data da Solicitação</th>
+              {/* O cabeçalho já está correto */}
+              <th>Solicitado Por</th> 
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {requests.length === 0 ? (
               <tr>
-                <th>SKU do Produto</th>
-                <th>Data da Solicitação</th>
-                <th>Solicitado Por</th>
-                <th>Ações</th>
+                <td colSpan={4} style={{ textAlign: 'center' }}>Nenhuma solicitação pendente.</td>
               </tr>
-            </thead>
-            <tbody>
-              {requests.map(req => (
-                <tr key={req.id}>
-                  <td>{req.productSku}</td>
-                  <td>{new Date(req.create_at).toLocaleDateString('pt-BR')}</td>
-                  <td>{req.requestedById}</td>
+            ) : (
+              requests.map(request => (
+                <tr key={request.id}>
+                  <td>{request.productSku}</td>
+                  <td>{new Date(request.create_at).toLocaleString('pt-BR')}</td>
+                  
+                  {/* 7. Usa o mapa para exibir o nome */}
+                  <td>
+                    {userMap[request.requestedById] ? userMap[request.requestedById] : (
+                      <em title={`ID: ${request.requestedById}`}>Usuário desconhecido</em>
+                    )}
+                  </td>
+                  
                   <td className={styles.actionsCell}>
-                    <button onClick={() => handleApprove(req.id)} className={`${styles.button} ${styles.approveButton}`}>
+                    <button onClick={() => handleApprove(request.id)} className={styles.approveButton}>
                       Aprovar
                     </button>
-                    <button onClick={() => handleReject(req.id)} className={`${styles.button} ${styles.rejectButton}`}>
+                    <button onClick={() => handleReject(request.id)} className={styles.rejectButton}>
                       Rejeitar
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

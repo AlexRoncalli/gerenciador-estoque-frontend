@@ -9,15 +9,16 @@ type ModalProps = {
   onClose: () => void;
   title: string;
   children: React.ReactNode; // 'children' permite colocar qualquer conteúdo dentro do modal
+  contentClassName?: string;
 };
 
-export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, contentClassName }: ModalProps) {
   const nodeRef = useRef(null);
   // Criamos uma ref para rastrear o clique
   const mouseDownTarget = useRef<EventTarget | null>(null);
   // Se o modal não estiver aberto, não renderiza nada
   if (!isOpen) {
-    return null;
+    return null; 
   }
   // Função para registrar onde o clique começou
   const handleMouseDown = (event: React.MouseEvent) => {
@@ -52,7 +53,12 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
     >
       {/* 2. Envolva o conteúdo do modal com o componente Draggable */}
       <Draggable nodeRef={nodeRef} handle={`.${styles.modalHeader}`}>
-        <div ref={nodeRef} className={styles.modalContent} style={{ cursor: 'move' }}>
+        <div 
+          ref={nodeRef} 
+          className={`${styles.modalContent} ${contentClassName || ''}`} 
+          style={{ cursor: 'move' }}
+          onClick={(e) => e.stopPropagation()} // Adicionado da versão 2
+        >
            {/* Adicionado cursor para feedback visual */}
           {/* 3. O 'handle' acima usa a classe do header para definir a área de arrasto */}
           <header className={styles.modalHeader}>
@@ -61,7 +67,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
               <FaTimes />{/*não sei oq isso faz ver com juru*/}
             </button>
           </header>
-          <main style={{ cursor: 'default' }}> {/* Restaura o cursor padrão para o conteúdo */}
+          <main className={styles.modalBody} style={{ cursor: 'default' }}> 
             {children}
           </main>
         </div>

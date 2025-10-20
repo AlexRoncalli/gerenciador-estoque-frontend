@@ -7,9 +7,10 @@ type EditObservationModalProps = {
   onClose: () => void;
   onSave: (newObservation: string) => void;
   initialObservation: string;
+  isSubmitting: boolean;
 };
 
-export function EditObservationModal({ isOpen, onClose, onSave, initialObservation }: EditObservationModalProps) {
+export function EditObservationModal({ isOpen, onClose, onSave, initialObservation, isSubmitting, }: EditObservationModalProps) {
   const [observation, setObservation] = useState('');
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export function EditObservationModal({ isOpen, onClose, onSave, initialObservati
     <Modal isOpen={isOpen} onClose={onClose} title="Editar Observação">
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
-          <label htmlFor="observation">Nova Observação</label>
+          <label htmlFor="observation">Observação</label>
           <textarea
             id="observation"
             value={observation}
@@ -38,9 +39,24 @@ export function EditObservationModal({ isOpen, onClose, onSave, initialObservati
             rows={4}
           />
         </div>
+        
         <footer className={styles.formFooter}>
-          <button type="button" onClick={onClose} className={styles.cancelButton}>Cancelar</button>
-          <button type="submit" className={styles.submitButton}>Salvar Alteração</button>
+          <button 
+            type="button" 
+            onClick={onClose} 
+            className={styles.cancelButton}
+            disabled={isSubmitting} // Desabilita o cancelar também, opcional
+          >
+            Cancelar
+          </button>
+          
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={isSubmitting} 
+          >
+            {isSubmitting ? 'Salvando...' : 'Salvar'}
+          </button>
         </footer>
       </form>
     </Modal>

@@ -1,21 +1,24 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import styles from './Availability.module.css';
 import { useProducts } from '../../context/ProductContext';
 import { ActionMenu } from '../../components/ActionMenu';
 import { exportToExcel } from '../../utils/exportToExcel';
+import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
+import { AxiosError } from 'axios';
 
 export function Availability() {
   // Obtém as listas do nosso contexto global
   const { locations, masterLocations, removeMasterLocation } = useProducts();
-  
+  const { user } = useContext(AuthContext)
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Cria um conjunto (Set) das localizações ocupadas para uma verificação rápida e eficiente
   const occupiedLocations = useMemo(() => new Set(locations.map(loc => loc.location)), [locations]);
-  
+
   const availabilityData = useMemo(() => {
     return masterLocations
-      .filter(locationName => 
+      .filter(locationName =>
         locationName.toLowerCase().includes(searchQuery.toLowerCase())
       )
       .map(locationName => ({
@@ -42,6 +45,29 @@ export function Availability() {
     }
   };
 
+  const handleRequestMasterLocationDeletion = async (locationName: string) => {
+    // Usuário não pode solicitar exclusão de local ocupado
+    if (occupiedLocations.has(locationName.toLowerCase())) {
+      alert(`Não é possível solicitar a exclusão da localização "${locationName}" porque ela está ocupada.`);
+      return;
+    }
+
+    if (window.confirm(`Deseja solicitar ao administrador a exclusão da localização "${locationName}"?`)) {
+      try {
+        await api.post(`/master-location/request-deletion/${encodeURIComponent(locationName)}`); 
+        alert('Solicitação de exclusão enviada para o administrador.');
+        // Opcional: Adicionar feedback visual na linha da tabela
+      } catch (error) {
+        console.error("Erro ao solicitar exclusão de local mestre:", error);
+        if (error instanceof AxiosError && error.response?.data?.error) {
+          alert(`Erro: ${error.response.data.error}`);
+        } else {
+          alert('Não foi possível enviar a solicitação.');
+        }
+      }
+    }
+  };
+
   return (
     <div className={styles.pageContainer}>
       <header className={styles.headerActions}>
@@ -65,14 +91,26 @@ export function Availability() {
             <tr>
               <th>Localização</th>
               <th>Disponibilidade</th>
+              {/* Mantém o cabeçalho "Ações" visível para todos */}
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {availabilityData.map(({ location, status }) => {
-              const menuOptions = [
-                { label: 'Excluir', onClick: () => handleDeleteMasterLocation(location) },
-              ];
+              // --- LÓGICA DO MENU ATUALIZADA ---
+              const menuOptions = [];
+              if (user?.role === 'ADMIN') {
+                menuOptions.push({
+                  label: 'Excluir',
+                  onClick: () => handleDeleteMasterLocation(location)
+                });
+              } else if (user?.role === 'USUARIO') {
+                menuOptions.push({
+                  label: 'Solicitar Exclusão',
+                  onClick: () => handleRequestMasterLocationDeletion(location)
+                });
+              }
+              // --- FIM DA LÓGICA DO MENU ---
 
               return (
                 <tr key={location}>
@@ -82,8 +120,10 @@ export function Availability() {
                       {status}
                     </span>
                   </td>
+                  {/* Mantém a célula "Ações" visível para todos */}
                   <td className={styles.actionsCell}>
-                    <ActionMenu options={menuOptions} />
+                    {/* Renderiza o menu SE houver opções (ADMIN ou USUARIO) */}
+                    {menuOptions.length > 0 && <ActionMenu options={menuOptions} />}
                   </td>
                 </tr>
               );
@@ -94,4 +134,3 @@ export function Availability() {
     </div>
   );
 }
-

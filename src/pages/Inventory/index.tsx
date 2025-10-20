@@ -62,7 +62,7 @@ export function Inventory() {
   useEffect(() => { setCurrentPage(1); }, [searchQuery]);
 
   // Função de Adicionar, conectada à API
-  const handleAddProduct = async (newProductData: Omit<Product, 'id' | 'quantity' | 'history'>) => {
+  const handleAddProduct = async (newProductData: Omit<Product, 'id' | 'quantity'>) => {
     if (products.some(p => p.sku.toLowerCase() === newProductData.sku.toLowerCase())) {
       alert('Erro: O SKU já existe na lista atual.');
       return;
@@ -85,11 +85,12 @@ export function Inventory() {
         ...newProductData,
         quantity: 0, // Quantidade inicial é sempre 0
         buyedUnits: 0,
-        local: 'Indefinido',
+        //local: 'Indefinido',
         history: { // Inicia o histórico com o melhor preço sendo o preço inicial
           lastEditDate: new Date().toLocaleDateString('pt-BR'),
           previousPrice: newProductData.costPrice,
           bestPrice: newProductData.costPrice,
+          //imageUrl: newProductData.imageUrl
         }
       };
 
@@ -110,7 +111,7 @@ export function Inventory() {
   };
 
   // Função de Editar, agora conectada à API e com controle de submissão
-  const handleEditProduct = async (updatedProductData: Omit<Product, 'quantity'>) => {
+  const handleEditProduct = async (updatedProductData: Omit<Product, 'quantity' | 'id'>) => {
     const originalProduct = products.find(p => p.sku === updatedProductData.sku);
     if (!originalProduct) return;
 
@@ -134,7 +135,7 @@ export function Inventory() {
 
       // <-- 4. Atualizamos o estado local com a resposta do servidor
       setProducts(current =>
-        current.map(p => (p.sku === updatedProductData.sku ? response.data : p))
+        current.map(p => (p.sku === updatedProductData.sku ? response.data : p))//operador ternario pro if do juru
       );
       setIsModalOpen(false);
 
@@ -176,22 +177,54 @@ export function Inventory() {
 
   // Funções auxiliares para abrir modais e exportar
   const handleExport = () => {
-    const dataToExport = filteredProducts.map(product => ({
-      'SKU': product.sku,
-      'Nome do Produto': product.name,
-      'Cor': product.color || '-',
-      'Preço de Custo': product.costPrice,
-      'Quantidade': product.quantity,
-      'Marca': product.brand,
-      'Melhor Preço': product.history?.bestPrice,
-      // A data do melhor preço será a data da última edição, como guardado no histórico
-      'Data (Melhor Preço)': product.history?.lastEditDate,
-    }));
+    const excelHeaders = [
+      'SKU',
+      'Nome do Produto',
+      'Cor',
+      // Preço de Custo será inserido depois se for Admin
+      'Quantidade',
+      'Marca',
+      'Origem',
+      'Link da Imagem',
+      // Melhor Preço / Data serão adicionados depois se for Admin
+    ];
 
-    // 2. Chama a função de exportação com os dados já preparados
-    exportToExcel(dataToExport, 'inventario_kualie_bijux');
+    // Adiciona cabeçalhos de Admin condicionalmente
+    if (user?.role === 'ADMIN') {
+      excelHeaders.splice(3, 0, 'Preço de Custo'); // Insere na 4ª posição (índice 3)
+      excelHeaders.push('Melhor Preço', 'Data (Melhor Preço)'); // Adiciona no final
+    }
+
+    const dataToExport = filteredProducts.map(product => {
+      // 1. Inicializa APENAS com os dados comuns, usando fallback ''
+      const rowData: any = {
+        'SKU': product.sku ?? '',
+        'Nome do Produto': product.name ?? '',
+        'Cor': product.color || '',
+        'Quantidade': product.quantity ?? '', // Quantidade deve existir, mas fallback por segurança
+        'Marca': product.brand ?? '',
+        'Origem': product.supplier || '',
+        'Link da Imagem': product.imageUrl || '',
+      };
+
+      // 2. ADICIONA os dados de Admin APENAS se for Admin
+      if (user?.role === 'ADMIN') {
+        rowData['Preço de Custo'] = product.costPrice ?? ''; // Use ?? '' como fallback
+        rowData['Melhor Preço'] = product.history?.bestPrice ?? ''; // Use ?? '' como fallback
+        rowData['Data (Melhor Preço)'] = product.history?.lastEditDate ?? ''; // Use ?? '' como fallback
+      }
+      console.log("socorro!!");
+
+      return rowData;
+    });
+
+    // Mantenha os logs para a verificação final
+    console.log("Dados para exportar (Simplificado):", dataToExport);
+    console.log("Cabeçalhos para exportar:", excelHeaders);
+
+    exportToExcel(dataToExport, 'inventario_kualie_bijux', excelHeaders);
   };
-  
+
   const openAddModal = () => {
     // ADICIONADO PARA TESTAR O CLIQUE
     console.log("Botão 'Adicionar Produto' foi clicado!");
@@ -219,8 +252,10 @@ export function Inventory() {
       <header className={styles.headerActions}>
         <input type="text" placeholder="Pesquisar por nome, marca ou SKU..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={styles.searchInput} />
         <div className={styles.buttonGroup}>
+
           <button className={styles.button} onClick={openAddModal}>Adicionar Produto</button>
-          <button className={`${styles.button} ${styles.exportButton}`} onClick={handleExport}>Exportar</button>
+
+          <button className={`${styles.button} ${styles.exportButton}`} onClick={handleExport}>Exportar para Excel</button>
         </div>
       </header>
 
@@ -231,43 +266,58 @@ export function Inventory() {
               <th>SKU</th>
               <th>Nome do Produto</th>
               <th>Cor</th>
-              <th>Preço de Custo</th>
+              {user?.role === 'ADMIN' && <th>Preço de Custo</th>}
               <th>Quantidade</th>
               <th>Marca</th>
+              <th>Origem</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {currentProducts.map((product) => {
-              const menuOptions = [
-                { label: 'Editar', onClick: () => openEditModal(product) },
-                { label: 'Histórico', onClick: () => openHistoryModal(product) },
-                { label: 'Clonar', onClick: () => openCloneModal(product) },
-              ];
+              // === ALTERAÇÃO 2: Lógica do Menu de Ações ===
+              const menuOptions = [];
 
-              // --- MUDANÇA PRINCIPAL AQUI ---
+              // Opções COMUNS a todos os usuários (ou ajustar conforme regra de negócio)
+              menuOptions.push({ label: 'Clonar', onClick: () => openCloneModal(product) });
+
+              // Opções SOMENTE para ADMIN
               if (user?.role === 'ADMIN') {
-                // Se for ADMIN, o botão deleta diretamente
-                menuOptions.splice(1, 0, {
-                  label: 'Excluir',
-                  onClick: () => handleDeleteProduct(product.sku)
-                });
-              } else if (user?.role === 'USUARIO') {
-                // Se for USUARIO, o botão solicita a exclusão
-                menuOptions.splice(1, 0, {
+                menuOptions.push(
+                  { label: 'Editar', onClick: () => openEditModal(product) },
+                  { label: 'Histórico', onClick: () => openHistoryModal(product) },
+                  { label: 'Excluir', onClick: () => handleDeleteProduct(product.sku) }
+                );
+              }
+              // Opção SOMENTE para USUARIO
+              else if (user?.role === 'USUARIO') {
+                menuOptions.push({
                   label: 'Solicitar Exclusão',
                   onClick: () => handleRequestDeletion(product.sku)
                 });
               }
+
+              // Opção de Imagem (comum a todos, se existir)
+              if (product.imageUrl) {
+                menuOptions.push({
+                  label: 'Imagem',
+                  onClick: () => window.open(product.imageUrl, '_blank', 'noopener,noreferrer')
+                });
+              }
+              // === FIM DA ALTERAÇÃO 2 ===
 
               return (
                 <tr key={product.sku}>
                   <td>{product.sku}</td>
                   <td>{product.name}</td>
                   <td>{product.color || '-'}</td>
-                  <td>{product.costPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  {/* === ALTERAÇÃO 3: Ocultar Célula de Preço === */}
+                  {user?.role === 'ADMIN' && (
+                    <td>{product.costPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  )}
                   <td>{product.quantity}</td>
                   <td>{product.brand}</td>
+                  <td>{product.supplier || '-'}</td>
                   <td className={styles.actionsCell}>
                     <ActionMenu options={menuOptions} />
                   </td>
@@ -279,6 +329,7 @@ export function Inventory() {
       </div>
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      {/* Modais só são renderizados, mas a lógica de abrir pode ser restrita se necessário */}
       <AddProductModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleSave} mode={modalMode} initialData={productToEdit} isSubmitting={isSubmitting} />
       <HistoryModal isOpen={isHistoryModalOpen} onClose={() => setIsHistoryModalOpen(false)} product={productForHistory} />
     </div>

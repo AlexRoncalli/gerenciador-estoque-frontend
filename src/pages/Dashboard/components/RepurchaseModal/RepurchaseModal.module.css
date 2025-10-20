@@ -5,7 +5,7 @@
 
 .tableContainer {
   width: 100%;
-  max-height: 55vh; /* Limita a altura da tabela */
+  max-height: 55vh;
   overflow-y: auto;
   margin-bottom: 1rem;
 }
@@ -28,11 +28,17 @@
 }
 
 .lowStock {
-  color: #dc3545; /* Vermelho para destacar a quantidade baixa */
+  color: #dc3545;
   font-weight: bold;
 }
 
-/* Novo: Estilos para o rodapé e o botão de exportação */
+/* Novo estilo para a coluna de sugestão */
+.suggestion {
+  color: #0d6efd;
+  font-weight: bold;
+  text-align: center;
+}
+
 .modalFooter {
   display: flex;
   justify-content: flex-end;
@@ -47,7 +53,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: #198754; /* Verde para combinar com a ideia de "sucesso/exportar" */
+  background-color: #198754;
   color: white;
   border: 1px solid #198754;
 }

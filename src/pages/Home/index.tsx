@@ -63,10 +63,18 @@ export function Home() {
     if (!locations) return 0;
     return locations.reduce((sum, loc) => sum + (loc.volume * (loc.unitsPerBox || 1)), 0);
   }, [locations]);
-  const totalOccupiedLocations = locations.length;
-  const totalFreeLocations = Math.max(0, masterLocations.length - totalOccupiedLocations);
 
-  const totalLocations = locations.length;
+  // --- INÍCIO DA CORREÇÃO DE LÓGICA ---
+  // 1. Calcula o número de NOMES de locais únicos que estão ocupados
+  const totalOccupiedLocations = useMemo(() => {
+    // Extrai todos os nomes, e o Set remove as duplicatas
+    const uniqueLocationNames = new Set(locations.map(loc => loc.location));
+    return uniqueLocationNames.size;
+  }, [locations]); // Recalcula apenas se 'locations' mudar
+
+  // 2. Calcula os locais livres usando a contagem correta
+  const totalFreeLocations = Math.max(0, masterLocations.length - totalOccupiedLocations);
+  // --- FIM DA CORREÇÃO DE LÓGICA ---
 
   return (
     <Box sx={{ p: 2 }}>
@@ -96,7 +104,7 @@ export function Home() {
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <StatCard
             title="Locais de Estoque Ocupados"
-            value={totalLocations}
+            value={totalOccupiedLocations}
             icon={<LocationOnIcon sx={{ fontSize: 40 }} />}
           />
         </Grid>

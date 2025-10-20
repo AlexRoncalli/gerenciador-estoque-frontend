@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Modal } from '../../../../components/Modal';
 import { Pagination } from '../../../../components/Pagination';
-import { exportToExcel } from '../../../../utils/exportToExcel'; // 1. Importa a função de exportar
+import { exportToExcel } from '../../../../utils/exportToExcel';
 import { Product } from '../../../../types';
 import styles from './RepurchaseModal.module.css';
 
 const ITEMS_PER_PAGE = 9;
 
+// O tipo de dados foi atualizado para incluir a 'suggestion'
 type RepurchaseModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  productsToRepurchase: (Product & { currentQuantity: number })[];
+  productsToRepurchase: (Product & { currentQuantity: number; suggestion: number })[];
 };
 
 export function RepurchaseModal({ isOpen, onClose, productsToRepurchase }: RepurchaseModalProps) {
@@ -22,19 +23,21 @@ export function RepurchaseModal({ isOpen, onClose, productsToRepurchase }: Repur
     currentPage * ITEMS_PER_PAGE
   );
 
-  // 2. Função para preparar os dados e chamar a exportação
   const handleExport = () => {
+    // Adiciona a nova coluna aos dados de exportação
     const dataToExport = productsToRepurchase.map(item => ({
       'Nome do Produto': item.name,
       'SKU': item.sku,
       'Quantidade Atual': item.currentQuantity,
       'Regra (Minimo)': item.repurchaseRule,
+      'Sugestão de Recompra': item.suggestion,
     }));
     exportToExcel(dataToExport, 'produtos_para_recompra');
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Lista de Produtos para Recompra">
+    // contentClassName is used, as in both versions
+    <Modal isOpen={isOpen} onClose={onClose} title="Lista de Produtos para Recompra" contentClassName={styles.wideModal}>
       <div className={styles.container}>
         <div className={styles.tableContainer}>
           <table className={styles.table}>
@@ -42,23 +45,29 @@ export function RepurchaseModal({ isOpen, onClose, productsToRepurchase }: Repur
               <tr>
                 <th>Nome do Item</th>
                 <th>SKU</th>
+                <th>Origem (Fornecedor)</th> {/* Added column header from version 2 */}
                 <th>Qtd. Atual</th>
                 <th>Regra (Mín.)</th>
+                <th>Sugestão de Recompra</th>
               </tr>
             </thead>
             <tbody>
               {currentItems.length > 0 ? (
                 currentItems.map(product => (
                   <tr key={product.sku}>
+                    {/* Corrected column mapping (name first) from version 2 */}
                     <td>{product.name}</td>
                     <td>{product.sku}</td>
+                    <td>{product.supplier || '-'}</td> {/* Added supplier data from version 2 */}
                     <td className={styles.lowStock}>{product.currentQuantity}</td>
                     <td>{product.repurchaseRule}</td>
+                    <td className={styles.suggestion}>{product.suggestion}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'center' }}>Nenhum produto precisa de recompra no momento.</td>
+                  {/* Updated colSpan to 6 from version 2 */}
+                  <td colSpan={6} style={{ textAlign: 'center' }}>Nenhum produto precisa de recompra no momento.</td>
                 </tr>
               )}
             </tbody>
@@ -69,7 +78,6 @@ export function RepurchaseModal({ isOpen, onClose, productsToRepurchase }: Repur
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
-        {/* 3. Adiciona o rodapé com o botão de exportação */}
         <footer className={styles.modalFooter}>
           <button className={styles.exportButton} onClick={handleExport}>
             Exportar para Excel
@@ -79,4 +87,3 @@ export function RepurchaseModal({ isOpen, onClose, productsToRepurchase }: Repur
     </Modal>
   );
 }
-

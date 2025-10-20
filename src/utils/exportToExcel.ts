@@ -7,10 +7,12 @@ type DataRow = { [key: string]: any };
  * Exporta um array de dados para um ficheiro .xlsx.
  * @param data O array de objetos a ser exportado.
  * @param fileName O nome do ficheiro a ser gerado (sem a extensão .xlsx).
+ * @param headers (Opcional) Um array de strings com os nomes das colunas na ordem desejada.
  */
-export const exportToExcel = (data: DataRow[], fileName: string): void => {
-  // 1. Cria uma nova "planilha" (worksheet) a partir do nosso array de dados JSON.
-  const worksheet = XLSX.utils.json_to_sheet(data);
+export const exportToExcel = (data: DataRow[], fileName: string, headers?: string[]): void => {
+  // 1. Cria a planilha. Se 'headers' for fornecido, usa-o.
+  const worksheet = XLSX.utils.json_to_sheet(data, { header: headers }); // <-- ALTERAÇÃO AQUI
+
 
   // 2. Cria um novo "livro de trabalho" (workbook), que é o próprio ficheiro Excel.
   const workbook = XLSX.utils.book_new();

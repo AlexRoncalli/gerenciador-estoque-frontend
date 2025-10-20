@@ -12,6 +12,41 @@
   padding-bottom: 1rem;
 }
 
+.headerActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Agrupa os botões */
+.buttonGroup {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Estilo base do botão azul */
+.button {
+  background-color: #0d6efd; /* Azul principal */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.button:hover {
+  background-color: #0b5ed7; /* Azul mais escuro no hover */
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+
 .header h1 {
   margin: 0;
   font-size: 1.8rem;

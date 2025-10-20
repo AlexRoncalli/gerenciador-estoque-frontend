@@ -1,18 +1,22 @@
 export interface Product {
+  id?: number | string;
   sku: string;
   name: string;
   costPrice: number;
   quantity: number;
   brand: string;
   unitsPerBox?: number;
-  color: string;
-  repurchaseRule: number; 
+  color?: string;
+  repurchaseRule?: number;
+  imageUrl?: string;
+  supplier?: string; 
   history?: {
     lastEditDate: string;
     previousPrice: number;
     bestPrice: number;
   }
 }
+
 
 export interface ProductLocation {
   id: string;
